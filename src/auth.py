@@ -1,4 +1,4 @@
-import pyrebase, firebase_config, re
+import pyrebase,  security.firebase_config as firebase_config, re
 from   typing              import Any
 from   requests.exceptions import HTTPError
 
