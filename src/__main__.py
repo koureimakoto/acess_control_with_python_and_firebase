@@ -37,22 +37,49 @@ Como Usar:
 
 def main() -> bool:
     # Fazer codigos de teste iniciar e testar aqui
-    email: str = 'urusai@gmail.com'
-    passwd:str = '##$Cachorrada#Anonima'
-    user_test = User()
+    # email: str = 'urusai@gmail.com'
+    # passwd:str = '##$Cachorrada#Anonima'
+    # user_test = User()
 
 
-    print( 'Email is   : ' , user_test.check_email(email)  )
-    print( 'Password is: ' , user_test.check_passwd(passwd))
-    print()
+    # print( 'Email is   : ' , user_test.check_email(email)  )
+    # print( 'Password is: ' , user_test.check_passwd(passwd))
+    # print()
 
-    if user_test.create_new_user(email, passwd):
-        print(user_test)
-    elif user_test.get_registed_user(email, passwd): 
-        print(user_test)
-        print('This e-mail is verified: ', user_test.get_register_state(), '\n')
-    else:
-        return False
+    # if user_test.create_new_user(email, passwd):
+    #     print(user_test)
+    # elif user_test.get_registed_user(email, passwd): 
+    #     print(user_test)
+    #     print('This e-mail is verified: ', user_test.get_register_state(), '\n')
+    # else:
+    #     return False
+
+    print('Seja bem vindo ao nosso Protópico de Cadastro e Verificação')
+    print('de E-mail usando o Firebase.')
+    print(' - Primeiramente, começaremos de um modo muito simples, Ok?')
+
+    while True:
+        print(' - Escolha um das opções abaixo usando o "teclado numérico"')
+        print(' - - 1: Verificar Situação do seu Cadastro' \
+              ' - - 2: Se não foi cadastrado ainda, cadastrar-se agora' \
+              ' - - 3: Alterar sua seu e-mail ou senha' \
+              ' - - 4: Deletar meu dados' \
+              ' - - 0: para encerrar a aplicação')
+
+        option: str = input('Digite sua opção --> ')
+        match option:
+            case '1':
+                pass
+            case '2':
+                pass
+            case '3':
+                pass
+            case '4':
+                pass
+            case '0':
+                pass
+            case   _:
+                print('Não é uma opção válida!!')
 
     # Final
     return True
