@@ -1,0 +1,1 @@
+## Arquivos que não podemos subir para Git

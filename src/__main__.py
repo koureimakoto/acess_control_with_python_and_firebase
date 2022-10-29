@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from auth import User
+import main_options
 
 """
 Como Usar:
@@ -41,7 +42,6 @@ def main() -> bool:
     # passwd:str = '##$Cachorrada#Anonima'
     # user_test = User()
 
-
     # print( 'Email is   : ' , user_test.check_email(email)  )
     # print( 'Password is: ' , user_test.check_passwd(passwd))
     # print()
@@ -58,25 +58,34 @@ def main() -> bool:
     print('de E-mail usando o Firebase.')
     print(' - Primeiramente, começaremos de um modo muito simples, Ok?')
 
+    user: User = User()
     while True:
         print(' - Escolha um das opções abaixo usando o "teclado numérico"')
-        print(' - - 1: Verificar Situação do seu Cadastro' \
-              ' - - 2: Se não foi cadastrado ainda, cadastrar-se agora' \
-              ' - - 3: Alterar sua seu e-mail ou senha' \
-              ' - - 4: Deletar meu dados' \
-              ' - - 0: para encerrar a aplicação')
+        print(' - - 1: Verificar Situação do seu Cadastro\n'              \
+              ' - - 2: Se não foi cadastrado ainda, cadastrar-se agora\n' \
+              ' - - 3: Alterar sua seu e-mail ou senha\n'                 \
+              ' - - 4: Deletar meu dados\n'                               \
+              ' - - 0: para encerrar a aplicação\n')
 
         option: str = input('Digite sua opção --> ')
+
+        # Limpa o terminal toda vez antes de entrar em uma opção
+        main_options.clear_terminal()
         match option:
             case '1':
+                main_options.verify_user(user)
                 pass
             case '2':
+                main_options.create_user(user)
                 pass
             case '3':
+                main_options.update_user(user)
                 pass
             case '4':
+                main_options.delete_user(user)
                 pass
             case '0':
+                print('Adeus querido ou querida')
                 pass
             case   _:
                 print('Não é uma opção válida!!')
