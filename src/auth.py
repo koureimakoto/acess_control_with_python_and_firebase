@@ -143,7 +143,7 @@ class User(HTTPError):
         Mantem reservado o token de autenticação ao invés da senha.
 
         get_id_token:
-            << status[''idToken]
+            << status['idToken']
 
         """
         return self.__token

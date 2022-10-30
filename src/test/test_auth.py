@@ -1,18 +1,17 @@
-#!/usr/bin/env python3 -[v]-m unittest
+#!/usr/bin/env -S python3 -m unittest
 import os
 import sys
 import unittest
 
-curr = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(curr)
+# Para conseguir importar um arquivo pai
+curr  : str = os.path.dirname(os.path.realpath(__file__))
+parent: str = os.path.dirname(curr)
 sys.path.append(parent)
+
 from auth import User
 
-
-
-
 class TestAuthMethods(unittest.TestCase):
-    user = User()
+    user: User = User()
 
     def test_check_email(self):
         """
@@ -31,8 +30,6 @@ class TestAuthMethods(unittest.TestCase):
         for e in wrong_emails:
             print(f'Check E-mail: {e}')
             self.assertFalse(self.user.check_email(e))
-
-        
 
     def test_check_passwd(self):
         """
@@ -68,3 +65,33 @@ class TestAuthMethods(unittest.TestCase):
             print(f'Check Passwd: {p}')
             self.assertFalse(self.user.check_passwd(p))
               
+    def test_privates_methods_set_response(self):
+        """
+        Testando metódo privado e verificando se ele está settando 
+        os attributos também privados corretamente.
+        """
+
+        # Simulando um dicionário simples de Auth do Firebase
+        test_this: dict[str, str] = {
+            'email'  : 'test@test.py',
+            'idToken': 'iamatoken'
+        }
+
+        # Define publicamente um método privado
+        self.user._User__set_response(test_this)
+        
+        # Testando as o falso dicionário
+        self.assertEqual(test_this['idToken'], self.user.get_id_token())
+        self.assertEqual(test_this['email'  ], self.user.get_email()   )
+        
+        # Saida
+        print(end='\n')
+        print( 
+            'Assert E-mail  : ', test_this['email'],
+            ' == ', self.user.get_email() 
+        )
+
+        print( 
+            'Assert Token ID: ', test_this['idToken'],
+            '    == ', self.user.get_id_token() 
+        )
