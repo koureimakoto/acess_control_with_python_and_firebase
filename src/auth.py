@@ -95,7 +95,7 @@ class User(HTTPError):
             >> email: String   # Qualquer tipo de e-mail que atendas formato de um\n
             << Boolean
         """
-        return re.findall(r'[\w\.-]+@[\w\.-]+\.[\w]+', email) and len(email) < 256
+        return re.findall(r'[\w\.-]+@((?!.*?[\_])[\w-]+[\.]{0,1}[^\_][\w]+)\.[\w]+', email) and len(email) < 256
 
     # ----------  check_passwd   ----------
     def check_passwd(self, passwd: str) -> bool:
@@ -113,7 +113,7 @@ class User(HTTPError):
         # (?=.*?[#?!@$%^&*-]) -> Busque 0 ou qalquer valor entre [ dentro dos colchetes ]
         # .{8, 100}$          -> minimo 8 máximo 100
         # $  -> Encerre no final da linha 
-        return re.findall(r'^(?=.*?[a-zA-Z0-9])(?!.*?[\ \r\t])(?=.*?[#?!@$%^&*-]).{8,}$', passwd) != []
+        return re.findall(r'^((?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?!.*?[\ \r\t])(?=.*?[#?!@$%^&*-]).{1,}).{8,}$', passwd) != []
     
     # ----------    get_email    ----------
     def get_email(self) -> str:
