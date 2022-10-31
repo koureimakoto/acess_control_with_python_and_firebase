@@ -95,3 +95,33 @@ class TestAuthMethods(unittest.TestCase):
             'Assert Token ID: ', test_this['idToken'],
             '    == ', self.user.get_id_token() 
         )
+
+    def test_privates_methods_set_statis(self):
+        """
+        Testando metódo privado e verificando se ele está settando 
+        os attributos também privados corretamente.
+        """
+
+        # Simulando um dicionário simples de Auth do Firebase
+        test_this: dict[str, str] = {
+            'email'  : 'test@test.py',
+            'idToken': 'iamatoken'
+        }
+
+        # Define publicamente um método privado
+        self.user._User__set_status(test_this)
+        
+        # Testando as o falso dicionário
+        self.assertEqual(test_this, self.user.get_status())
+        
+        # Saida
+        print(end='\n')
+        print( 
+            'Assert E-mail  : ', test_this['email'],
+            ' == ', self.user.get_email() 
+        )
+
+        print( 
+            'Assert Token ID: ', test_this['idToken'],
+            '    == ', self.user.get_id_token() 
+        )
