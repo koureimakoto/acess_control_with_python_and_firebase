@@ -1,6 +1,4 @@
 from enum     import Enum
-from ssl import _PasswordType
-from turtle import update
 from typing   import Literal
 from auth     import User
 from platform import platform
@@ -20,8 +18,9 @@ def create_user(user: User) -> bool:
     password_conf = input("Confirme a Senha: ")
     
     if password == password_conf:
-        user.create_user_with_email_and_password(email, password)
-        print("Usuário criado.")
+
+        user.create_new_user(email, password)
+        print("\nUsuário criado.\n")
         return True
 
     else:
@@ -31,8 +30,13 @@ def create_user(user: User) -> bool:
 def update_user(user: User) -> bool:
     update_password = input("Deseja alterar a senha?(S/N)\n").upper()
     if update_password == "S":
-        user.send_password_reset_email(user.get_email)
-        return True
+        try:
+            firebase.auth().send_password_reset_email(user.get_email)
+            return True
+        except:
+            print("Erro ao alterar a senha. Verifique seu STATUS\n")
+            verify_user(user)
+
     else:
         "Operação cancelada."
         return False
@@ -46,8 +50,13 @@ def delete_user(user: User) -> bool:
     """
     user_delete = input("Deseja deletar o usuario?(S/N)\n").upper()
     if user_delete == "S":
-        user.delete_user_account(user.get_id_token())
-        return True
+        try:
+            firebase.auth().delete_user_account(user.get_id_token())
+            return True
+        except:
+            print("Erro ao alterar a deletar o usuario. Verifique seu STATUS\n")
+            verify_user(user)
+
     else:
         "Operação cancelada."
         return False
@@ -59,10 +68,29 @@ def verify_user(user: User) -> bool:
     cadastrado e caso não esteja retorna o usuário
     retorna menu inicial.
     """
-    if user.get_email_verification:
+   
+    # if not user.get_register_state():
+    #     print("Status do Cadastro: USUARIO NAO CADASTRADO")
+
+    if not user.get_status():
+        print("Status da Sessão: INATIVO")
+        
+        iniciar = input("Deseja iniciar uma Sessão? (S/N)").upper()
+        if iniciar == "S":
+            email = input("\nEmail: ")
+            password = input("Senha: ")
+            login = user.get_registed_user(email, password)
+            if login:
+                return True
+            else:
+                return False
+        
+        else:
+            return False 
+    
+    else:  
+        print("Status da Sessão: ATIVO")
         return True
-    else:
-        return False
 
 def char_to_int( char: str ) -> int | bool:
     """

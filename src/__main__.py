@@ -70,7 +70,7 @@ def main() -> bool:
         option: str = input('Digite sua opção --> ')
 
         # Limpa o terminal toda vez antes de entrar em uma opção
-        main_options.clear_terminal()
+        #main_options.clear_terminal()
         match option:
             case '1':
                 main_options.verify_user(user)
