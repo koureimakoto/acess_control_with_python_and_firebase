@@ -1,8 +1,10 @@
-import pyrebase
-from security.firebase_config import firebaseConfig 
 import re
+import pyrebase
 from   typing              import Any
 from   requests.exceptions import HTTPError
+import security.firebaseConfig as firebaseConfig
+
+
 
 # ----------   class User    ----------
 class User(HTTPError):
@@ -42,10 +44,9 @@ class User(HTTPError):
         # Verifica antecipadamente se o e-mail esta formatado corretamentes antes
         # da requisição para o server do Firebase.
         if self.check_email(email) and self.check_passwd(passwd):
-
             # Tenta criar um novo usuário
             try:
-                firebase = pyrebase.initialize_app(firebaseConfig)
+                firebase = pyrebase.initialize_app(firebaseConfig.firebaseConfig)
                 # Registra os dados requisitados
                 self.__set_response(
                     firebase.auth().create_user_with_email_and_password(email, passwd)
@@ -54,9 +55,46 @@ class User(HTTPError):
             except HTTPError as e:
                 self.__error = e
                 return False
-        else:
-            print('Verify is your e-mail our password are correct!')
-            return False
+            except AttributeError as e:
+                self.__error = e
+                return False     
+
+        print('Verify is your e-mail our password are correct!')
+        return False
+
+    def update_password(self, email: str, old_passwd: str, new_passwd: str ) -> bool:
+        """
+        Wrapper das funções de criação cria um novo usuário com verificação
+
+        create_new_user:
+            >> e-mail: String   # Qualquer tipo de e-mail que atendas formato de um\n
+            >> passwd: String   # O password digitado pelo usuário\n
+            << Boolean          # Se tudo correr bem, retorna Verdadeiro\n
+        """
+  
+        # Verifica antecipadamente se o e-mail esta formatado corretamentes antes
+        # da requisição para o server do Firebase.
+        if self.check_email(email) and self.check_passwd(old_passwd) and self.check_passwd(new_passwd):
+
+            # Tenta criar um novo usuário
+            try:
+                firebase = pyrebase.initialize_app(firebaseConfig.firebaseConfig)
+
+                user_buff = firebase.auth()
+                
+                user_buff.sign_in_with_email_and_password(email, old_passwd)
+                user_buff.current_user.upate_password(new_passwd)
+                print()
+                return True
+            except HTTPError as e:
+                self.__error = e
+                return False  
+            except AttributeError as e:
+                self.__error = e
+                return False           
+        print('Verify is your e-mail our password are correct!')
+        return False
+
 
     # ----------  get_sign_user  ----------
     def get_registed_user(self, email: str, passwd: str) -> bool:
@@ -74,8 +112,7 @@ class User(HTTPError):
 
             # Tenta criar retornar um usuário já cadastro
             try:
-                firebase = pyrebase.initialize_app(firebaseConfig)
-
+                firebase = pyrebase.initialize_app(firebaseConfig.firebaseConfig)
                 # Registra os dados requisitados (LOGIN)
                 self.__set_response(
                     firebase.auth().sign_in_with_email_and_password(email, passwd)
@@ -85,6 +122,9 @@ class User(HTTPError):
             except HTTPError as e:
                 self.__error = e
                 return False
+            except AttributeError as e:
+                self.__error = e
+                return False   
         print('\nNão foi possível efetuar o Login. Verifique se seu Email e Senha estão corretos')
         print('Se não possuir uma Conta, CADASTRE-SE!\n')
         return False
@@ -98,7 +138,7 @@ class User(HTTPError):
             >> email: String   # Qualquer tipo de e-mail que atendas formato de um\n
             << Boolean
         """
-        return re.findall(r'[\w\.-]+@[\w\.-]+\.[\w]+', email) and len(email) < 256
+        return re.findall(r'[\w\.-]+@((?!.*?[\_])[\w-]+[\.]{0,1}[^\_][\w]+)\.[\w]+', email) and len(email) < 256
 
     # ----------  check_passwd   ----------
     def check_passwd(self, passwd: str) -> bool:
@@ -116,7 +156,7 @@ class User(HTTPError):
         # (?=.*?[#?!@$%^&*-]) -> Busque 0 ou qalquer valor entre [ dentro dos colchetes ]
         # .{8, 100}$          -> minimo 8 máximo 100
         # $  -> Encerre no final da linha 
-        return re.findall(r'^(?=.*?[a-zA-Z0-9])(?!.*?[\ \r\t])(?=.*?[#?!@$%^&*-]).{8,}$', passwd) != []
+        return re.findall(r'^((?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?!.*?[\ \r\t])(?=.*?[#?!@$%^&*-]).{1,}).{8,}$', passwd) != []
     
     # ----------    get_email    ----------
     def get_email(self) -> str:
@@ -136,7 +176,7 @@ class User(HTTPError):
         get_email_verification:
             << info['emailVerificied']
         """
-        firebase = pyrebase.initialize_app(firebaseConfig)
+        firebase = pyrebase.initialize_app(firebaseConfig.firebaseConfig)
         self.__set_info(firebase.auth().get_account_info(self.get_id_token())['users'][0])
         return self.get_info()['emailVerified']
 
@@ -146,7 +186,7 @@ class User(HTTPError):
         Mantem reservado o token de autenticação ao invés da senha.
 
         get_id_token:
-            << status[''idToken]
+            << status['idToken']
 
         """
         return self.__token

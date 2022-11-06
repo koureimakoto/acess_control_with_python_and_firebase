@@ -1,21 +1,21 @@
+import random
 from smtplib import SMTP
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text      import MIMEText
 
 class UserEmailVerification:
-    def __init__(self, user_email, user_password) -> None:
-        if user_email == '' or user_password == '':
-            return False
+    def __init__(self) -> None:
 
-        self.__uemail : str = user_email
-        self.__upasswd: str = user_password
+        self.__uemail : str = ''
+        self.__upasswd: str = ''
 
+        self.__rand   : str = ''
         self.__message: MIMEMultipart
         self.__email_from: str = ''
         self.__email_to  : str = ''
-        self.__email_subj: str = ''
-        self.__email_body: str = ''
+        self.__email_subj: str = 'Numero de verificação'
+        self.__email_body: str = str(random.randrange(100000, 999999))
 
         self.__email_states: dict[str, bool] = {
             'email_from'   : False,
@@ -25,6 +25,11 @@ class UserEmailVerification:
         }
 
     
+    def sender(self, email, passwd):
+        self.__uemail : str = email
+        self.__upasswd: str = passwd
+
+
     def mail_from(self, email):
         if self.empty(email):
             self.__email_from = email
@@ -61,17 +66,14 @@ class UserEmailVerification:
     def get_user_password(self):
         return self.__upasswd
 
+    def check_rand_number(self, rand: int):
+        return self.__email_body == rand
+
     def wrap(self):
         for state in self.__email_states:
             if  not self.__email_states[state]:
                 print( f'{state}: vazio', )
                 return self.__email_states[state]
-
-        print(self.__email_from)
-        print(self.__email_to)
-        print(self.__email_subj)
-        print(self.__email_body)
-        print()
 
         self.__message = MIMEMultipart()
         self.__message['From']    = self.__email_from
@@ -88,6 +90,7 @@ class SMTPConn():
         self.__port   : int = 587
 
     def send(self, user: UserEmailVerification):
+        
         conn = SMTP(self.__server, self.__port)
         conn.starttls()
         conn.login(
@@ -98,10 +101,7 @@ class SMTPConn():
         conn.quit()
     
 
-# email_fmt = UserEmailVerification('urusaidenoite@gmail.com', 'xrzikqvxdbmpynrf')
+# email_fmt = UserEmailVerification('urusaidenoite@gmail.com', 'bumfwllmhnpvzuct')
 
-# email_fmt.mail_from('urusaidenoite@gmail.com').mail_to('urusaidenoite@gmail.com').subject('titulo').body('corpo').wrap()
+# email_fmt.mail_from('urusaidenoite@gmail.com').mail_to('urusaidenoite@gmail.com').wrap()
 
-# conn = SMTPConn()
-# conn.send(email_fmt)
-# xrzi kqvx dbmp ynrf
